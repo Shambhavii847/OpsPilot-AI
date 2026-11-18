@@ -1,4 +1,4 @@
-
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
@@ -76,7 +76,7 @@ class AppSetting(Base):
     value = Column(Text, default="")
 
 
-Base.metadata.create_all(bind=engine)
+
 
 
 def get_db():
@@ -146,19 +146,30 @@ def seed_demo_data(db: Session):
     db.commit()
 
 
-with SessionLocal() as db:
-    seed_demo_data(db)
 
 
 # --------------------------------------------------
 # APPLICATION
 # --------------------------------------------------
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+
+    with SessionLocal() as db:
+        seed_demo_data(db)
+
+    yield
+
+
 app = FastAPI(
     title="OpsPilot AI",
     description="AI Operations Agent for Businesses - Local Demo API",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -647,44 +658,24 @@ def get_audit_logs(db: Session = Depends(get_db)):
 # SETTINGS
 # --------------------------------------------------
 
-@app.get("/api/settings/")
-def get_settings(db: Session = Depends(get_db)):
-    key_setting = db.query(AppSetting).filter(
-        AppSetting.name == "gemini_api_key"
-    ).first()
 
+@app.get("/api/settings/")
+def get_settings():
     return {
         "mode": "Demo Mode",
-        "ai_provider": "Gemini configured" if key_setting and key_setting.value else "Rule-based fallback",
+        "ai_mode": "demo",
+        "ai_provider": "Rule-based demo (Gemini not integrated)",
         "database": "Local SQLite",
-        "api_key_configured": bool(key_setting and key_setting.value)
+        "api_key_configured": False
     }
 
 
 @app.post("/api/settings/gemini-key")
-def save_gemini_key(payload: dict, db: Session = Depends(get_db)):
-    key = payload.get("api_key", "").strip()
-
-    if not key:
-        raise HTTPException(status_code=400, detail="API key cannot be empty")
-
-    setting = db.query(AppSetting).filter(
-        AppSetting.name == "gemini_api_key"
-    ).first()
-
-    if not setting:
-        setting = AppSetting(name="gemini_api_key", value=key)
-        db.add(setting)
-    else:
-        setting.value = key
-
-    db.commit()
-
-    add_audit(db, "AI Settings Updated", "Gemini API key configuration updated.")
-
-    return {"message": "API key saved locally", "configured": True}
-
-
+def save_gemini_key(payload: dict):
+    raise HTTPException(
+        status_code=410,
+        detail="Gemini integration is not enabled. API keys are not accepted."
+    )
 @app.post("/api/settings/reset-demo")
 def reset_demo_data(db: Session = Depends(get_db)):
     db.query(Product).delete()

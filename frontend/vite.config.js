@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -8,5 +9,17 @@ export default defineConfig({
     proxy: {
       '/api': { target: 'http://localhost:8000', changeOrigin: true }
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'chart-vendor': ['recharts'],
+          'ui-vendor': ['lucide-react']
+        }
+      }
+    }
   }
 })
+

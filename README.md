@@ -1,27 +1,25 @@
-# OpsPilot AI 🚀
+# OpsPilot AI
 
 **From Business Insights to Intelligent Action.**
 
 **Hackathon:** PromptWars x AgentX 2.0  
 **Challenge:** PS05 – AI Operations Agent for Businesses
 
-## Overview
+## 1. Overview
 
-OpsPilot AI is a local, full-stack business operations platform built for the PromptWars x AgentX 2.0 hackathon.
+OpsPilot AI is a full-stack business operations demo that helps businesses monitor operational data, identify inventory risks, and review suggested actions.
 
-It demonstrates a multi-agent operations workflow that analyzes business data, identifies operational issues, generates actionable recommendations, and supports human-approved actions.
+It combines a React frontend, FastAPI backend, and SQLite database. Its rule-based analysis identifies low-stock products and generates recommendations for human review.
 
-The application uses a React frontend, FastAPI backend, and SQLite database.
+## 2. Problem Statement and Chosen Vertical
 
-## Problem Statement
+**Vertical: Business Operations and Inventory Management**
 
-Businesses often struggle with fragmented operational data, manual KPI monitoring, inventory issues, and delayed responses to unusual business patterns.
+Businesses can lose sales when inventory levels are not monitored and replenishment decisions are delayed. OpsPilot AI demonstrates how operational data can be analyzed to identify potential stock shortages and turn them into actionable recommendations.
 
-OpsPilot AI demonstrates how intelligent automation can help transform business data into useful operational insights.
+## 3. Solution and Logic
 
-## Solution
-
-OpsPilot AI uses seven specialized agent modules to support business operations:
+The application presents seven specialized agent modules in demo mode:
 
 - Business Analytics
 - Inventory Management
@@ -31,47 +29,39 @@ OpsPilot AI uses seven specialized agent modules to support business operations:
 - Action Execution
 - Verification and Audit
 
-The application includes a human-in-the-loop approval process. Actions in the demo environment are simulated locally and require approval before execution.
+The implemented analysis currently uses rule-based inventory logic:
 
-## Key Features
+1. Retrieve products from the database.
+2. Compare each product's quantity with its reorder level.
+3. Identify products whose quantity is at or below the reorder level.
+4. Generate a high-priority reorder recommendation when one does not already exist in pending status.
+5. Save the recommendations and record an audit event.
 
-- **Multi-Agent Architecture:** Seven specialized operational agent modules.
-- **Business Dashboard:** KPIs, revenue trends, and business health indicators.
-- **Inventory Management:** Product and stock monitoring.
-- **Business Analytics:** Revenue and product performance insights.
-- **Anomaly Detection:** Rule-based identification of operational issues.
-- **Recommendations:** Prioritized business recommendations.
-- **Human Approval:** Approval and rejection of pending recommendations.
-- **Audit Trail:** Records decisions and simulated actions.
-- **Local Demo Mode:** Runs locally using SQLite and sample data.
-- **No API Key Required:** Rule-based functionality works without an external AI service.
+The seven modules represent the intended operations workflow; they are not seven independently running AI models.
 
-## Multi-Agent Architecture
+## 4. Key Features
 
-```text
-             OpsPilot AI
-             Orchestrator
-                  |
-       +----------+----------+
-       |          |          |
-   Business   Inventory   Anomaly
-  Analytics  Management  Detection
-       |          |          |
-       +----------+----------+
-                  |
-           Workflow Planning
-                  |
-            Recommendation
-                  |
-          HUMAN APPROVAL
-                  |
-          Action Execution
-                  |
-          Verification
-             & Audit
-```
+- Business KPI dashboard
+- Inventory and stock monitoring
+- Rule-based low-stock analysis
+- Prioritized recommendations
+- Human approval and rejection
+- Simulated recommendation execution
+- Audit log for decisions and actions
+- SQLite demo database
+- API documentation through FastAPI Swagger
 
-## Technology Stack
+## 5. Human-in-the-Loop Workflow
+
+1. The system analyzes demo business data.
+2. Recommendations are generated.
+3. A human reviews and approves or rejects them.
+4. Approved recommendations can proceed to simulated execution.
+5. Decisions and actions are recorded in the audit log.
+
+No real purchases, payments, or external business transactions are performed.
+
+## 6. Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -85,32 +75,28 @@ The application includes a human-in-the-loop approval process. Actions in the de
 | ORM | SQLAlchemy |
 | API Server | Uvicorn |
 
-## Project Structure
+## 7. Project Structure
 
 ```text
 OpsPilot-AI/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── layouts/
-│   │   └── services/
-│   ├── public/
-│   └── package.json
-│
 ├── backend/
 │   ├── main.py
 │   ├── requirements.txt
-│   ├── .venv/
-│   └── opspilot.db
-│
+│   ├── requirements-dev.txt
+│   └── tests/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   └── services/
+│   └── package.json
 ├── data/
 ├── README.md
-├── run_local.bat
-└── stop_local.bat
+└── .gitignore
 ```
 
-## Getting Started (macOS)
+## 8. Getting Started
 
 ### Prerequisites
 
@@ -118,120 +104,4 @@ OpsPilot-AI/
 - Node.js and npm
 - Git
 
-### 1. Clone the repository
-
-```bash
-git clone YOUR_PUBLIC_GITHUB_REPOSITORY_URL
-cd OpsPilot-AI
-```
-
-Replace the placeholder URL with your actual repository URL.
-
-### 2. Start the backend
-
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python main.py
-```
-
-The backend runs at:
-
-http://127.0.0.1:8000
-
-Keep this terminal open.
-
-### 3. Start the frontend
-
-Open a second terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open the application:
-
-http://localhost:5173
-
-## API Documentation
-
-FastAPI Swagger documentation:
-
-http://127.0.0.1:8000/docs
-
-Health check:
-
-http://127.0.0.1:8000/api/health
-
-## Application Pages
-
-| Page | Description |
-|---|---|
-| Overview | Business KPIs and dashboard |
-| AI Operations | Seven-agent operations control center |
-| Inventory | Product and stock management |
-| Analytics | Revenue and product performance |
-| Recommendations | Human approval workflow |
-| Workflows | Operational workflow overview |
-| Audit Log | Decision and action history |
-| Settings | Application settings and demo reset |
-
-## Human-in-the-Loop Safety
-
-OpsPilot AI demonstrates human oversight through its recommendation workflow.
-
-1. Agents analyze the available demo data.
-2. The system generates recommendations.
-3. A human reviews and approves or rejects recommendations.
-4. Only approved recommendations can proceed to simulated execution.
-5. Actions and decisions are recorded in the audit log.
-
-**No real purchases, payments, or external business transactions are performed.**
-
-## Demo Data
-
-The application initializes sample business data in its local SQLite database.
-
-To reset the demo data, use the Settings page and select **Reset Demo Data**.
-
-## Testing API Endpoints
-
-Check backend health:
-
-```bash
-curl http://127.0.0.1:8000/api/health
-```
-
-Check dashboard KPIs:
-
-```bash
-curl http://127.0.0.1:8000/api/dashboard/kpis
-```
-
-Run agent analysis:
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/agents/run-analysis
-```
-
-## Future Improvements
-
-- Gemini-powered natural-language insights
-- Advanced machine-learning anomaly detection
-- Email and Slack notifications
-- Multi-user authentication
-- Real supplier integrations
-- PDF and Excel report exports
-- Role-based access control
-
-## License
-
-MIT License.
-
-Built with ❤️ using Google Antigravity, React, FastAPI, and SQLite.
-
-**OpsPilot AI — From Business Insights to Intelligent Action.**
+### Clone
